@@ -4,7 +4,7 @@ const cors = require('cors')
 const cookieParser = require("cookie-parser");
 const mongoose = require('mongoose');
 
-const dbUrl="mongodb://127.0.0.1:27017/cohorts-tools-api"
+const dbUrl="mongodb://127.0.0.1:27017/cohort-tools-api"
 const PORT = 5005;
 
 // STATIC DATA
@@ -12,7 +12,8 @@ const PORT = 5005;
 // ...
 const cohortsList = require( './cohorts.json');
 const studentsList = require('./students.json');
-const Cohorts = require('./models/Cohorts')
+const Cohort = require('./models/Cohort')
+const Student =  require('./models/Student')
 
 
 // INITIALIZE EXPRESS APP - https://expressjs.com/en/4x/api.html#express
@@ -38,17 +39,43 @@ app.get("/docs", (req, res) => {
   res.sendFile(__dirname + "/views/docs.html"); 
 });
 
-app.get('/api/cohorts',(req,res)=>{
-  Cohorts.find()
-  .then((data)=>{
-    res.status(200).json(data);
-  })
-  .catch((err)=>{console.log(err)})
-})
+app.get('/api/cohorts', (req, res) => {
+  Cohort.find()
+    .then((cohorts) => {
+      console.log('Cohorts:', cohorts);
+      res.status(200).json(cohorts);
+    })
+    .catch((err) => {
+      console.log('Error fetching cohorts:', err);
+      res.status(500).send('Internal Server Error');
+    });
+});
+
 
 app.get('/api/students',(req,res)=>{
-  res.json(studentsList)
+  Student.find()
+  .then((students)=>{
+    console.log('Student List:',students)
+    res.status(200).json(students)
+  })
+  .catch((err)=>{
+    console.log('Error fetching student data', err)
+    res.status(500).send('Internal Server Error')
+  })
 })
+
+app.post('api/students', (req,res)=>{
+  Student.create(req.body)
+  .then((student)=>{
+    res.status(200).json(student)
+  })
+  .catch((err)=>{
+    console.error(err);
+    res.status(500).send({error: "internal server error"})
+  })
+})
+
+
 
 
 //Mongoose-Connection
@@ -56,7 +83,10 @@ app.get('/api/students',(req,res)=>{
 mongoose
         .connect(dbUrl)
         .then( e => console.log(`Connection ON! ${e.connections[0].name}`))
-        .catch(err => console.log(`Can't connect because ${err}`))
+        .catch(err =>{
+        console.log(`Can't connect because ${err}`)
+        res.status(500).send("Internal Server Error!")
+      })
 
 // START SERVER
 app.listen(PORT, () => {
