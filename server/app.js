@@ -3,14 +3,16 @@ const morgan = require("morgan");
 const cors = require('cors')
 const cookieParser = require("cookie-parser");
 const mongoose = require('mongoose');
-const cohortsList = require( './cohorts.json');
-const studentsList = require('./students.json');
+
 
 const PORT = 5005;
 
 // STATIC DATA
 // Devs Team - Import the provided files with JSON data of students and cohorts here:
 // ...
+const cohortsList = require( './cohorts.json');
+const studentsList = require('./students.json');
+const cohorts = require('./models/Cohorts')
 
 
 // INITIALIZE EXPRESS APP - https://expressjs.com/en/4x/api.html#express
@@ -37,7 +39,7 @@ app.get("/docs", (req, res) => {
 });
 
 app.get('/api/cohorts',(req,res)=>{
-  res.json()
+  res.json(cohorts)
 })
 
 app.get('/api/students',(req,res)=>{
@@ -47,7 +49,9 @@ app.get('/api/students',(req,res)=>{
 
 //Mongoose-Connection
 
-mongoose.connect('mongodb://http://127.0.0.1:5005/')
+mongoose.connect('mongodb://localhost:5005/cohorts-tools-api', ()=> {
+  console.log("Connection Ok")
+})
 
 // START SERVER
 app.listen(PORT, () => {
