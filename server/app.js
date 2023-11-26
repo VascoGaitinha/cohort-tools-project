@@ -49,9 +49,9 @@ app.get('/api/students',(req,res)=>{
 
 //Mongoose-Connection
 
-mongoose.connect('mongodb://localhost:5005/cohorts-tools-api', ()=> {
-  console.log("Connection Ok")
-})
+mongoose
+        .connect('mongodb://127.0.0.1:5005/cohorts-tools-api');
+        .then(console.log(`Connection ON!`));
 
 // START SERVER
 app.listen(PORT, () => {
