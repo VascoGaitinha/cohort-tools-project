@@ -4,7 +4,7 @@ const cors = require('cors')
 const cookieParser = require("cookie-parser");
 const mongoose = require('mongoose');
 
-
+const dbUrl="mongodb://127.0.0.1:27017/cohorts-tools-api"
 const PORT = 5005;
 
 // STATIC DATA
@@ -12,7 +12,7 @@ const PORT = 5005;
 // ...
 const cohortsList = require( './cohorts.json');
 const studentsList = require('./students.json');
-const cohorts = require('./models/Cohorts')
+const Cohorts = require('./models/Cohorts')
 
 
 // INITIALIZE EXPRESS APP - https://expressjs.com/en/4x/api.html#express
@@ -39,7 +39,11 @@ app.get("/docs", (req, res) => {
 });
 
 app.get('/api/cohorts',(req,res)=>{
-  res.json(cohorts)
+  Cohorts.find()
+  .then((data)=>{
+    res.status(200).json(data);
+  })
+  .catch((err)=>{console.log(err)})
 })
 
 app.get('/api/students',(req,res)=>{
@@ -50,8 +54,9 @@ app.get('/api/students',(req,res)=>{
 //Mongoose-Connection
 
 mongoose
-        .connect('mongodb://127.0.0.1:5005/cohorts-tools-api');
-        .then(console.log(`Connection ON!`));
+        .connect(dbUrl)
+        .then( e => console.log(`Connection ON! ${e.connections[0].name}`))
+        .catch(err => console.log(`Can't connect because ${err}`))
 
 // START SERVER
 app.listen(PORT, () => {
