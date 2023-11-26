@@ -55,6 +55,7 @@ app.get('/api/cohorts', (req, res) => {
 
 app.get('/api/students',(req,res)=>{
   Student.find()
+  .populate('cohort')
   .then((students)=>{
     console.log('Student List:',students)
     res.status(200).json(students)
@@ -81,6 +82,7 @@ app.get('/api/students/cohort/:cohortId', (req,res)=>{
   const {cohortId} = req.params
 
   Student.find({ cohort: {$eq :`${cohortId}`}})
+  .populate('cohort')
   .then((students)=>{
     console.log('Retrieved sucessfully', students)
     res.status(200).json(students)
@@ -95,6 +97,7 @@ app.get('/api/students/:studentId', (req,res)=>{
   const {studentId} = req.params
   
   Student.find({ _id: {$eq :`${studentId}`}})
+  .populate('cohort')
   .then((student)=>{
     console.log("Student Exists")
     res.status(200).json(student)
@@ -147,6 +150,43 @@ app.get('/api/cohorts/:cohortId', (req, res) => {
       res.status(500).send('Internal Server Error');
     });
 });
+
+app.post('/api/cohorts', (req,res)=>{
+  Cohort.create(req.body)
+  .then((cohort)=>{
+    console.log("Added",cohort)
+    res.status(200).json(cohort)
+  })
+  .catch((err)=>{
+    console.error("Could not create because:",err)
+    res.status(500).json({error: err.message})
+  })
+})
+
+app.put('/api/cohorts/:cohortId', (req,res)=>{
+  Cohort.findByIdAndUpdate(req.params.cohortId,req.body, {new: true})
+  .then((cohort)=>{
+    console.log("Added",cohort)
+    res.status(200).json(cohort)
+  })
+  .catch((err)=>{
+    console.error("Could not create because:",err)
+    res.status(500).json({error: err.message})
+  })
+})
+
+
+
+app.delete('/api/cohorts/:cohortId',(req,res)=>{
+  Cohort.findByIdAndDelete(req.params.cohortId)
+  .then(()=>{
+    res.status(200).json({message: "Cohort Deleted"})
+  })
+  .catch((err)=>{
+    console.log("Failed to delete cohort", req.params.cohortId)
+    res.status(500).json({err: err.message})
+  })
+})
 
 //Mongoose-Connection
 
