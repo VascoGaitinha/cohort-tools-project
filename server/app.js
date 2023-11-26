@@ -65,8 +65,15 @@ app.get('/api/students',(req,res)=>{
 })
 
 app.post('api/students', (req,res)=>{
-  Student.create(req.body)
+  const {firstName, lastName, email, phone} = req.body
+  Student.create({
+    firstName: firstName,
+    lastName: lastName,
+    email: email,
+    phone: phone
+  })
   .then((student)=>{
+    console.log("Student Added")
     res.status(200).json(student)
   })
   .catch((err)=>{
