@@ -64,25 +64,29 @@ app.get('/api/students',(req,res)=>{
   })
 })
 
-app.post('api/students', (req,res)=>{
-  const {firstName, lastName, email, phone} = req.body
-  Student.create({
-    firstName: firstName,
-    lastName: lastName,
-    email: email,
-    phone: phone
-  })
+app.post('/api/students', (req,res) => {
+  Student.create(req.body)
   .then((student)=>{
-    console.log("Student Added")
+    console.log("Student Created Sucessfully")
     res.status(200).json(student)
   })
   .catch((err)=>{
-    console.error(err);
-    res.status(500).send({error: "internal server error"})
+    console.error('Could not create because',err)
+    res.status(500).json({error: err.message})
   })
 })
 
-
+app.get('/api/students/cohort/:cohortId', (req,res)=>{
+  Student.find({ cohort: `ObjectId(`${req.params.cohortId}`)` })
+  .then((students)=>{
+    console.log('Retrieved sucessfully', students)
+    res.status(200).json(students)
+  })
+  .catch((err)=>{
+    console.log(`Error fetching students by cohort ${err}`)
+    res.status(500).json({error: err.message})
+  })
+})
 
 
 //Mongoose-Connection
