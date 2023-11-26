@@ -132,6 +132,20 @@ app.delete('/api/students/:studentId',(req,res)=>{
   })
 })
 
+app.get('/api/cohorts/:cohortId',(req,res)=>{
+  const {cohortId} = req.params
+
+  Cohort.findById(cohortId)
+    .then((cohort)=>{
+      console.log("Found",cohort)
+      res.status(200).json(cohort)
+    })
+    .catch((err)=>{
+      console.error(err)
+      res.status(500).json({error: err.message})
+    })
+})
+
 
 //Mongoose-Connection
 
