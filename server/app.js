@@ -4,6 +4,7 @@ const cors = require('cors')
 const cookieParser = require("cookie-parser");
 const mongoose = require('mongoose');
 
+
 const dbUrl="mongodb://127.0.0.1:27017/cohort-tools-api"
 const PORT = 5005;
 
@@ -132,26 +133,26 @@ app.delete('/api/students/:studentId',(req,res)=>{
   })
 })
 
-app.get('/api/cohorts/:cohortId',(req,res)=>{
+//Cohorts
+
+app.get('/api/cohorts/:cohortId', (req, res) => {
   const {cohortId} = req.params
-
   Cohort.findById(cohortId)
-    .then((cohort)=>{
-      console.log("Found",cohort)
-      res.status(200).json(cohort)
+    .then((cohort) => {
+      console.log('Cohort:', cohort);
+      res.status(200).json(cohort);
     })
-    .catch((err)=>{
-      console.error(err)
-      res.status(500).json({error: err.message})
-    })
-})
-
+    .catch((err) => {
+      console.log('Error fetching cohort:', err);
+      res.status(500).send('Internal Server Error');
+    });
+});
 
 //Mongoose-Connection
 
 mongoose
         .connect(dbUrl)
-        .then( e => console.log(`Connection ON! ${e.connections[0].name}`))
+        .then( e => console.log(`Connected to ${e.connections[0].name}`))
         .catch(err =>{
         console.log(`Can't connect because ${err}`)
         res.status(500).send("Internal Server Error!")
