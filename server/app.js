@@ -1,6 +1,10 @@
 const express = require("express");
 const morgan = require("morgan");
+const cors = require('cors')
 const cookieParser = require("cookie-parser");
+const cohortsList = require( './cohorts.json')
+const studentsList = require('./students.json')
+
 const PORT = 5005;
 
 // STATIC DATA
@@ -18,8 +22,10 @@ const app = express();
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(express.static("public"));
+app.use(cors())
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
 
 
 // ROUTES - https://expressjs.com/en/starter/basic-routing.html
@@ -30,7 +36,11 @@ app.get("/docs", (req, res) => {
 });
 
 app.get('/api/cohorts',(req,res)=>{
-  res.send()
+  res.json(cohortsList)
+})
+
+app.get('/api/students',(req,res)=>{
+  res.json(studentsList)
 })
 
 
