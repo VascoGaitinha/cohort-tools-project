@@ -26,8 +26,12 @@ app.use(cookieParser());
 // Devs Team - Start working on the routes here:
 // ...
 app.get("/docs", (req, res) => {
-  res.sendFile(__dirname + "/views/docs.html");
+  res.sendFile(__dirname + "/views/docs.html"); 
 });
+
+app.get('/api/cohorts',(req,res)=>{
+  res.send()
+})
 
 
 // START SERVER
