@@ -77,14 +77,58 @@ app.post('/api/students', (req,res) => {
 })
 
 app.get('/api/students/cohort/:cohortId', (req,res)=>{
-  Student.find({ cohort: `ObjectId(`${req.params.cohortId}`)` })
+  const {cohortId} = req.params
+
+  Student.find({ cohort: {$eq :`${cohortId}`}})
   .then((students)=>{
     console.log('Retrieved sucessfully', students)
     res.status(200).json(students)
   })
   .catch((err)=>{
-    console.log(`Error fetching students by cohort ${err}`)
+    console.error(`Error fetching students by cohort ${err}`)
     res.status(500).json({error: err.message})
+  })
+})
+
+app.get('/api/students/:studentId', (req,res)=>{
+  const {studentId} = req.params
+  
+  Student.find({ _id: {$eq :`${studentId}`}})
+  .then((student)=>{
+    console.log("Student Exists")
+    res.status(200).json(student)
+  })
+  .catch((err)=>{
+    console.error("Can't find student")
+    res.status(500).json({error: err.message})
+  })
+})
+
+app.put('/api/students/:studentId', (req,res)=>{
+  const {studentId} = req.params
+  const {studentData} = req.body
+
+  Student.findByIdAndUpdate(studentId,req.body,{new:true})
+    .then(() => {
+      console.log("Updated Sucessfully")
+      res.status(200).json(studentData)
+    })
+    .catch((err)=>{
+      console.error("Could not Update");
+      res.status(500).json({error: err.message})
+    })
+})
+
+app.delete('/api/students/:studentId',(req,res)=>{
+  const {studentId} = req.params;
+  Student.findByIdAndDelete(studentId)
+  .then(()=>{
+    console.log("Student deleted")
+    res.status(200).json({message: "Student deleted"})
+  })
+  .catch((err)=>{
+    console.log("Failed to delete");
+    res.status(500).json({error:err.message})
   })
 })
 
